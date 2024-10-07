@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Informasi Perangkat dan Alamat IP</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        h1 {
+            color: #333;
+        }
+        .info-box {
+            margin-top: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+            width: 300px;
+        }
+        .info-box p {
+            margin: 0;
+            padding: 8px 0;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Informasi Perangkat dan Alamat IP</h1>
+    <div class="info-box">
+        <p>Nama Perangkat: <span id="deviceName">Mendeteksi...</span></p>
+        <p>Alamat IP: <span id="ipAddress">Mengambil alamat IP...</span></p>
+        <p>Kota: <span id="city">Mengambil informasi...</span></p>
+        <p>Wilayah: <span id="region">Mengambil informasi...</span></p>
+        <p>Negara: <span id="country">Mengambil informasi...</span></p>
+        <p>Status VPN: <span id="vpnStatus">Memeriksa status VPN...</span></p>
+    </div>
+
+    <script>
+        // Fungsi untuk mendapatkan alamat IP pengguna dan informasi lokasi menggunakan ipinfo.io
+        async function fetchIPAddressAndLocation() {
+            try {
+                // Ganti 'your_token_here' dengan token API dari ipinfo.io jika diperlukan
+                const response = await fetch('https://ipinfo.io?token=b5e99b4d5a6ea2'); // Ganti token API sesuai milik Anda
+                const data = await response.json();
+
+                // Menampilkan alamat IP
+                document.getElementById('ipAddress').textContent = data.ip;
+
+                // Menampilkan informasi lokasi
+                document.getElementById('city').textContent = data.city || 'Tidak tersedia';
+                document.getElementById('region').textContent = data.region || 'Tidak tersedia';
+                document.getElementById('country').textContent = data.country || 'Tidak tersedia';
+
+                // Deteksi VPN berdasarkan informasi dari ipinfo.io
+                if (data.org && data.org.includes('VPN') || data.proxy || data.hosting) {
+                    document.getElementById('vpnStatus').textContent = "Menggunakan VPN";
+                } else {
+                    document.getElementById('vpnStatus').textContent = "Tidak Menggunakan VPN";
+                }
+            } catch (error) {
+                console.error('Gagal mendapatkan informasi IP:', error);
+                document.getElementById('vpnStatus').textContent = 'Gagal mendeteksi status VPN';
+            }
+        }
+
+        // Fungsi untuk mendapatkan informasi platform perangkat pengguna
+        function getDeviceName() {
+            const deviceName = navigator.platform; // Mendapatkan informasi platform perangkat
+            document.getElementById('deviceName').textContent = deviceName;
+        }
+
+        // Panggil fungsi secara langsung setelah script didefinisikan
+        fetchIPAddressAndLocation();
+        getDeviceName();
+    </script>
+
+</body>
+</html>
